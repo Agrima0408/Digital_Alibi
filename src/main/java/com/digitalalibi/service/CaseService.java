@@ -26,4 +26,8 @@ public class CaseService {
     public Case save(Case c){
         return caseRepository.save(c);
     }
+
+    public void deleteById(Long id){
+        caseRepository.deleteById(id);
+    }
 }
