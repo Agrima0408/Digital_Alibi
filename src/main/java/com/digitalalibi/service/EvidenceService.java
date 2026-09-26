@@ -13,6 +13,7 @@ public class EvidenceService {
     public EvidenceService(EvidenceRepository evidenceRepository) {
         this .evidenceRepository = evidenceRepository;
     }
+
     public List<Evidence> findAll(){
         return evidenceRepository.findAll();
     }

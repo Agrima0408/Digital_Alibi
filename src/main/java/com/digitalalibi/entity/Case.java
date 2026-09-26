@@ -1,8 +1,11 @@
 package com.digitalalibi.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cases")
@@ -15,6 +18,18 @@ public class Case {
     private String caseDescription;
     private String caseStatus;
     private LocalDateTime caseCreatedAt;
+
+    @OneToMany(mappedBy = "caseEntity")
+    @JsonManagedReference
+    private List<Evidence> evidences = new ArrayList<>();
+
+    @OneToMany
+    @JsonManagedReference
+    private List<Suspect> suspects = new ArrayList<>();
+
+    @OneToMany
+    @JsonManagedReference
+    private List<Victim> victims = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -50,6 +65,14 @@ public class Case {
 
     public LocalDateTime getCaseCreatedAt() {
         return caseCreatedAt;
+    }
+
+    public List<Evidence> getEvidences() {
+        return evidences;
+    }
+
+    public void setEvidences(List<Evidence> evidences) {
+        this.evidences = evidences;
     }
 
     public void setCaseCreatedAt(LocalDateTime caseCreatedAt) {

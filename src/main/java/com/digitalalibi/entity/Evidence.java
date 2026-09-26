@@ -1,5 +1,6 @@
 package com.digitalalibi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class Evidence {
     private String evidenceStatus;
 
     @ManyToOne
+    @JsonBackReference
     private Case caseEntity;
 
 
