@@ -1,5 +1,7 @@
 package com.digitalalibi.controller;
+import com.digitalalibi.entity.Case;
 import com.digitalalibi.entity.Victim;
+import com.digitalalibi.service.CaseService;
 import com.digitalalibi.service.VictimService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +12,12 @@ import java.util.Optional;
 @RestController
 public class VictimController {
     private VictimService victimService;
+    private CaseService caseService;
 
     @Autowired
-    public VictimController(VictimService victimService) {
+    public VictimController(VictimService victimService, CaseService caseService) {
         this.victimService = victimService;
+        this.caseService = caseService;
     }
 
     @GetMapping("/api/victims")
@@ -40,5 +44,18 @@ public class VictimController {
     public Victim updateVictimById(@PathVariable Long id, @RequestBody Victim victim) {
         victim.setId(id);
         return victimService.save(victim);
+    }
+
+    @PostMapping("/api/cases/{caseId}/victims")
+    public Victim addSuspectToCase(
+            @PathVariable Long caseId,
+            @RequestBody Victim suspect) {
+
+        Case caseEntity = caseService.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found"));
+
+        suspect.setCaseEntity(caseEntity);
+
+        return victimService.save(suspect);
     }
 }

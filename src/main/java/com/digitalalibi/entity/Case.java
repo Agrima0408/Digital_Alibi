@@ -23,13 +23,29 @@ public class Case {
     @JsonManagedReference
     private List<Evidence> evidences = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "caseEntity")
     @JsonManagedReference
     private List<Suspect> suspects = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany (mappedBy = "caseEntity")
     @JsonManagedReference
     private List<Victim> victims = new ArrayList<>();
+
+    public List<Suspect> getSuspects() {
+        return suspects;
+    }
+
+    public void setSuspects(List<Suspect> suspects) {
+        this.suspects = suspects;
+    }
+
+    public List<Victim> getVictims() {
+        return victims;
+    }
+
+    public void setVictims(List<Victim> victims) {
+        this.victims = victims;
+    }
 
     public Long getId() {
         return id;
