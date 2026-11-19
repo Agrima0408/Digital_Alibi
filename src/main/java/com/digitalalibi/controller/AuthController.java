@@ -1,5 +1,6 @@
 package com.digitalalibi.controller;
 
+import com.digitalalibi.dto.LoginRequest;
 import com.digitalalibi.dto.RegisterRequest;
 import com.digitalalibi.service.AuthService;
 import com.digitalalibi.service.UserService;
@@ -21,4 +22,11 @@ public class AuthController {
     public String register(@RequestBody RegisterRequest request) {
         return authService.register(request);
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+
+    
 }
