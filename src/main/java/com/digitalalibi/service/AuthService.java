@@ -2,6 +2,7 @@
 package com.digitalalibi.service;
 
 import com.digitalalibi.dto.LoginRequest;
+import com.digitalalibi.dto.LoginResponse;
 import com.digitalalibi.dto.RegisterRequest;
 import com.digitalalibi.entity.User;
 import com.digitalalibi.repository.UserRepository;
@@ -51,7 +52,7 @@ public class AuthService {
         return "User registered successfully";
     }
 
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         //1.find user using email
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
@@ -66,6 +67,8 @@ public class AuthService {
         if(!passwordMatch) {
             throw new RuntimeException("Invalid password");
         }
-        return jwtService.generateToken(user.getEmail());
+
+        String token = jwtService.generateToken(user.getEmail());
+        return new LoginResponse("Login successful", token);
     }
 }
