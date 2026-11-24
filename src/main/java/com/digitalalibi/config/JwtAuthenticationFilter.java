@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -37,42 +38,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        //Retrieves the JWT sent by Postman or your frontend.
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);//Remove Bearer
-        String email = jwtService.extractEmail(token);//Extract email
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        if (email != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        String token = authHeader.substring(7);
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(email); //Load the user
-
+        try {
             if (jwtService.validateToken(token)) {
 
+                String email = jwtService.extractEmail(token);
+
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(email);
+
                 UsernamePasswordAuthenticationToken authentication =
-                        //Creates an authenticated Spring Security object.
                         new UsernamePasswordAuthenticationToken(
-                                userDetails, //The user we loaded from the database
-                                null,//No password credentials needed for this JWT authentication
-                                userDetails.getAuthorities() //User's granted permissions
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
                         );
 
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request)
                 );
-                //Store authentication: Now Spring Security knows which user is making this request.
+
                 SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
             }
+        } catch (io.jsonwebtoken.JwtException |
+                 IllegalArgumentException |
+                 org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+            SecurityContextHolder.clearContext();
         }
-        //Allows the request to proceed to the next filter.
+
         filterChain.doFilter(request, response);
     }
+
 }
