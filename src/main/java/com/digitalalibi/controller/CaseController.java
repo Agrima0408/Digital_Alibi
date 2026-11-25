@@ -3,6 +3,7 @@ package com.digitalalibi.controller;
 import com.digitalalibi.entity.Case;
 import com.digitalalibi.service.CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class CaseController {
         return caseService.save(c);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/api/cases/{id}")
     public void deleteCase(@PathVariable Long id){ caseService.deleteById(id);}
 
